@@ -229,7 +229,7 @@ namespace ESP8266_IoT {
     /**
     * Check if ESP8266 successfully connected to HTTP
     */
-    //% block="ThingSpeak connected %State"
+    //% block="HTTP connected %State"
     //% subcategory="HTTP"
     export function HTTPState(state: boolean) {
         if (HTTP_connected == state) {
@@ -241,12 +241,12 @@ namespace ESP8266_IoT {
     }
 
     /**
-    * upload data. It would not upload anything if it failed to connect to Wifi or hTTP.
+    * upload data. It would not upload anything if it failed to connect to Wifi or HTTP.
     */
     //% block="Upload data to HTTP"
     //% subcategory="HTTP"
     export function uploadHTTPData() {
-        if (thingspeak_connected) {
+        if (HTTP_connected) {
             last_upload_successful = false
             sendAT("AT+CIPSEND=" + (toSendStr.length + 2), 100)
             sendAT(toSendStr, 100) // upload data
@@ -255,7 +255,19 @@ namespace ESP8266_IoT {
         }
     }
 
-    
+    /**
+    * Check if ESP8266 successfully uploaded data to HTTP
+    */
+    //% block="HTTP Last data upload %State"
+    //% subcategory="HTTP"
+    export function HTTPLastUploadState(state: boolean) {
+        if (last_upload_successful == state) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
     
     /*-----------------------------------kitsiot---------------------------------*/
     /**
