@@ -6,6 +6,7 @@ namespace ESP8266_IoT {
 
     let wifi_connected: boolean = false
     let thingspeak_connected: boolean = false
+    let HTTP_connected: boolean = false
     let kitsiot_connected: boolean = false
     let last_upload_successful: boolean = false
     let userToken_def: string = ""
@@ -81,6 +82,7 @@ namespace ESP8266_IoT {
 
         wifi_connected = false
         thingspeak_connected = false
+        HTTP_connected = false
         kitsiot_connected = false
         sendAT("AT+CWJAP=\"" + ssid + "\",\"" + pw + "\"", 0) // connect to Wifi router
         wifi_connected = waitResponse()
@@ -129,6 +131,8 @@ namespace ESP8266_IoT {
                 + n8
         }
     }
+        
+    
     /**
     * upload data. It would not upload anything if it failed to connect to Wifi or ThingSpeak.
     */
@@ -194,6 +198,65 @@ namespace ESP8266_IoT {
             return false
         }
     }
+    
+    /*-----------------------------------HTTP---------------------------------*/     
+    /**
+    * Connect to any HTTP endpoint
+    */
+    //% block="connect HTTP"
+    //% subcategory="HTTP"
+    export function connectHTTP(host: string) {
+        if (wifi_connected && kitsiot_connected == false) {
+            HTTP_connected = false
+            let text = "AT+CIPSTART=\"TCP\",\"" + host + "\",80"
+            sendAT(text, 0) // connect to website server
+            HTTP_connected = waitResponse()
+            basic.pause(100)
+        }
+    }
+    
+    /**
+    * Connect to HTTP and set data. 
+    */
+    //% block="set data to send HTTP|uri = %uri"
+    //% subcategory="HTTP"
+    export function setHTTPdata(uri: string) {
+        if (HTTP_connected) {
+            toSendStr = "GET " + uri
+        }
+    }
+    
+    /**
+    * Check if ESP8266 successfully connected to HTTP
+    */
+    //% block="ThingSpeak connected %State"
+    //% subcategory="HTTP"
+    export function HTTPState(state: boolean) {
+        if (HTTP_connected == state) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    /**
+    * upload data. It would not upload anything if it failed to connect to Wifi or hTTP.
+    */
+    //% block="Upload data to HTTP"
+    //% subcategory="HTTP"
+    export function uploadHTTPData() {
+        if (thingspeak_connected) {
+            last_upload_successful = false
+            sendAT("AT+CIPSEND=" + (toSendStr.length + 2), 100)
+            sendAT(toSendStr, 100) // upload data
+            last_upload_successful = waitResponse()
+            basic.pause(100)
+        }
+    }
+
+    
+    
     /*-----------------------------------kitsiot---------------------------------*/
     /**
     * Connect to kitsiot
