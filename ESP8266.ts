@@ -203,7 +203,7 @@ namespace ESP8266_IoT {
     /**
     * Connect to any HTTP endpoint
     */
-    //% block="connect HTTP"
+    //% block="connect HTTP|host = %host"
     //% subcategory="HTTP"
     export function connectHTTP(host: string) {
         if (wifi_connected && kitsiot_connected == false) {
@@ -218,11 +218,11 @@ namespace ESP8266_IoT {
     /**
     * Connect to HTTP and set data. 
     */
-    //% block="set data to send HTTP|uri = %uri"
+    //% block="set data to send HTTP|path = %path"
     //% subcategory="HTTP"
-    export function setHTTPdata(uri: string) {
+    export function setHTTPdata(path: string) {
         if (HTTP_connected) {
-            toSendStr = "GET " + uri
+            toSendStr = "GET " + path
         }
     }
     
