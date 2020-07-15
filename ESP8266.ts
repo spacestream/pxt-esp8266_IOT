@@ -252,7 +252,7 @@ namespace ESP8266_IoT {
 
             last_upload_successful = false
             toSendStr = toSendStr + " HTTP/1.1" + "\u000D" + "\u000A" + "Host: " + lasthost + "\u000D" + "\u000A" 
-            sendAT("AT+CIPSEND=" + (toSendStr.length), 100)
+            sendAT("AT+CIPSEND=" + (toSendStr.length+2), 100)
             sendAT(toSendStr, 100) // upload data
             last_upload_successful = waitResponse()
             basic.pause(100)
