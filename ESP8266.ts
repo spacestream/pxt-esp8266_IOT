@@ -17,6 +17,7 @@ namespace ESP8266_IoT {
     const EVENT_OFF_ID = 110
     const EVENT_OFF_Value = 210
     let toSendStr = ""
+    let lasthost = ""
 
     export enum State {
         //% block="Success"
@@ -247,9 +248,10 @@ namespace ESP8266_IoT {
     //% subcategory="HTTP"
     export function uploadHTTPData() {
         if (httpstate_connected) {
+
             last_upload_successful = false
             sendAT("AT+CIPSEND=" + (toSendStr.length), 100)
-            sendAT(toSendStr, 100) // upload data
+            sendAT(toSendStr + " HTTP/1.1" + "\u000D" + "\u000A" + "Host: " + lasthost, 100) // upload data
             last_upload_successful = waitResponse()
             basic.pause(100)
         }
