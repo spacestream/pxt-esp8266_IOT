@@ -209,6 +209,7 @@ namespace ESP8266_IoT {
     export function connectHTTP(host: string) {
         if (wifi_connected && kitsiot_connected == false) {
             httpstate_connected = false
+            lasthost = host
             let text = "AT+CIPSTART=\"TCP\",\"" + host + "\",80"
             sendAT(text, 0) // connect to website server
             httpstate_connected = waitResponse()
@@ -250,8 +251,9 @@ namespace ESP8266_IoT {
         if (httpstate_connected) {
 
             last_upload_successful = false
+            toSendStr = toSendStr + " HTTP/1.1" + "\u000D" + "\u000A" + "Host: " + lasthost + "\u000D" + "\u000A" 
             sendAT("AT+CIPSEND=" + (toSendStr.length), 100)
-            sendAT(toSendStr + " HTTP/1.1" + "\u000D" + "\u000A" + "Host: " + lasthost, 100) // upload data
+            sendAT(toSendStr, 100) // upload data
             last_upload_successful = waitResponse()
             basic.pause(100)
         }
