@@ -249,7 +249,8 @@ namespace ESP8266_IoT {
         if (httpstate_connected) {
             last_upload_successful = false
             sendAT("AT+CIPSEND=" + (toSendStr.length), 100)
-            sendAT(toSendStr, 100) // upload data
+            serial.writeString(toSendStr)
+            basic.pause(100) // upload data
             last_upload_successful = waitResponse()
             basic.pause(100)
         }
